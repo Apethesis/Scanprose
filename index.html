@@ -1,9 +1,38 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>My Electron App</title>
+    <title>Scanprose - Scanlate online, with the help of ML!</title>
+    <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="import" href="/components/login-section.html">
 </head>
+
 <body>
-  <h1>Hello Electron!</h1>
+    <div id="editor">
+        <div id="toolbar" @shortkey="handleShortcuts" v-shortkey="shortcuts">
+            <button id="detectjp" @click="detectJapanese">Detect all Japanese</button>
+            <button id="makebubbles" @click="makeBubbles">Translate to English</button>
+            <button id="selectbox" @click="snippetTool" :class="{selected: currentTool == 'SNIPPET'}">
+                Identify one bubble
+            </button>
+            <button id="painttool" @click="paintTool" :class="{selected: currentTool == 'PAINT'}">Brush</button>
+            <button id="saveproject" @click="saveProject">Save</button>
+            <button id="exportimage" @click="exportImage">Export .png</button>
+
+            <a target="_blank" class="links" id="aboutlink" href="/about.html">About</a>
+            <a href="#" class="links" @click="showHelp">Help</a>
+        </div>
+        <div id="leftbar">
+            
+
+            <login-section></login-section>
+
+            <project-component v-show="project.pages.length > 1" ref="project" @change-page="handlePageChange"
+                v-model="project" :current-page-id="currentPageId"></project-component>
+        </div>
+        
+        
+    </div>
 </body>
+
 </html>
