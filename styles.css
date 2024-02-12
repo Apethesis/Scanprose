@@ -1,0 +1,156 @@
+body {
+  margin: 0 auto;
+  height: 100vh;
+  font-family: 'PT Sans', sans-serif;
+}
+
+input, textarea, select, button {
+  font-family: 'PT Sans', sans-serif;
+}
+
+#editor {
+  height: 100vh;
+  display: grid;
+  padding-left: 1em;
+  gap: 1em;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 200px auto 240px 1fr;
+}
+
+#leftbar {
+  grid-area: 2 / 1;
+}
+
+#toolbar {
+  /* Toolbar stretches across top row. */
+  grid-area: 1 / 2 / 1 / 5; 
+  display: flex;
+  margin-top: 1em;
+}
+
+#toolbar > button {
+  text-align: center;
+  height: 40px;
+  width: 120px;
+  font-family: 'PT Sans', sans-serif;
+}
+
+button.selected {
+  background-color: #f8d1d1;
+}
+
+#aboutlink {
+  padding-left: 180px;
+  padding-right: 20px;
+}
+
+.links{
+  font-size: 18px;
+}
+
+#scrollport {
+  grid-row: 2;
+  width: fit-content;
+  overflow: scroll;
+  border: 1px solid black;
+  position: relative;
+}
+
+#rightbar {
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+#editor > textarea {
+  font-size: 30pt;
+}
+
+#konva {
+  position: absolute;
+}
+
+#textlayers {
+  position: absolute;
+}
+
+@font-face {
+  font-family: "Wild Words";
+  src: url("assets/fonts/wildwordsroman.ttf");
+}
+
+@font-face {
+  font-family: "Death Rattle";
+  src: url("assets/fonts/deathrattlebb_reg.ttf");
+}
+
+@font-face {
+  font-family: "Akbar";
+  src: url("assets/fonts/akbar.ttf");
+}
+
+@font-face {
+  font-family: "Obelix Pro";
+  src: url("assets/fonts/ObelixPro-cyr.ttf");
+}
+
+@font-face {
+  font-family: "Laffayette Comic Pro";
+  src: url("assets/fonts/Laffayette\ Comic\ Pro.ttf");
+}
+
+@font-face {
+  font-family: "From Where You Are";
+  src: url("assets/fonts/FromWhereYouAre.ttf");
+}
+
+textarea.bubbletext {
+  text-align: center;
+  overflow: hidden;
+  outline: none;
+  background: transparent;
+  border: none;
+  resize: none;
+  padding:  0;
+}
+
+.drag-handle {
+  position: absolute;
+  top: -15px;
+  left: -15px; 
+  cursor: move;
+}
+
+.vdr {
+  border: none;
+}
+
+.active.vdr {
+  margin-left: -1px;
+  margin-top: -1px;
+  border: 1px dashed gray;
+}
+
+.panel {
+  padding: 8px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #7e2632;
+}
+
+.space > * + * {
+  /* Between each child: */
+  margin-top: 4px;
+}
+
+h4 {
+  margin: 0;
+  margin-bottom: 6px;
+  color:gray;
+  font-size: 0.7em;
+}
+
+input[type='number'] {
+  width: 5em;
+}
