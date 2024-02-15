@@ -20,11 +20,27 @@ Vue.component('login-component', {
   computed: {
   },
   template: `
-  <div class="panel space">
-    <h4>PROJECTS</h4>
-    <div v-if="value.id">
-      Welcome, {{ value.name }}!
-      <button @click="logOut">Log out</button>
+  <div class="shadow-sm rounded my-3 p-3 border-0 bg-white space">
+
+  <div class="row">
+    <div class="col-md-6">
+
+      <img src="assets/logo/vector/logo-256x64.svg" width="180px" height="45px">
+      <h4 class="mt-3">Welcome, {{ value.name }}!</h4>
+      <div v-if="value.id">
+
+        <button class="btn btn-basic border rounded mb-3" @click="logOut">Log out</button>
+
+
+      </div>
+      <div v-else>
+        <button class="btn btn-basic border rounded mb-3" @click="promptLogIn">Log in</button>
+      </div>
+    </div>
+    <div class="col-md-6">
+
+      <p><b>Projects</b></p>
+
       <ul>
         <li v-for="project in value.projects">
           <a :href="projectUrl(project.id)" target="_blank" rel="noopener noreferrer">
@@ -33,9 +49,8 @@ Vue.component('login-component', {
         </li>
       </ul>
     </div>
-    <div v-else>
-      <button @click="promptLogIn">Log in</button>
-    </div>
   </div>
+
+</div>
   `
 });

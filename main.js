@@ -14,6 +14,7 @@ function createWindow() {
     }
   })
 
+    win.maximize();
     win.loadFile('index.html');
 
 }

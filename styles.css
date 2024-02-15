@@ -2,6 +2,7 @@ body {
   margin: 0 auto;
   height: 100vh;
   font-family: 'PT Sans', sans-serif;
+  background-color: #f0f2f3 !important;
 }
 
 input, textarea, select, button {
@@ -10,29 +11,6 @@ input, textarea, select, button {
 
 #editor {
   height: 100vh;
-  display: grid;
-  padding-left: 1em;
-  gap: 1em;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 200px auto 240px 1fr;
-}
-
-#leftbar {
-  grid-area: 2 / 1;
-}
-
-#toolbar {
-  /* Toolbar stretches across top row. */
-  grid-area: 1 / 2 / 1 / 5; 
-  display: flex;
-  margin-top: 1em;
-}
-
-#toolbar > button {
-  text-align: center;
-  height: 40px;
-  width: 120px;
-  font-family: 'PT Sans', sans-serif;
 }
 
 button.selected {
@@ -49,17 +27,9 @@ button.selected {
 }
 
 #scrollport {
-  grid-row: 2;
   width: fit-content;
   overflow: scroll;
-  border: 1px solid black;
   position: relative;
-}
-
-#rightbar {
-  grid-row: 2;
-  display: flex;
-  flex-direction: column;
 }
 
 #editor > textarea {
@@ -129,14 +99,6 @@ textarea.bubbletext {
   margin-left: -1px;
   margin-top: -1px;
   border: 1px dashed gray;
-}
-
-.panel {
-  padding: 8px;
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #7e2632;
 }
 
 .space > * + * {

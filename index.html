@@ -9,6 +9,7 @@
     href="https://cdn.jsdelivr.net/npm/vue-draggable-resizable@2.0.1/dist/VueDraggableResizable.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/introjs.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
@@ -23,161 +24,191 @@
 
 <body>
   <div id="editor">
-    <div id="toolbar" @shortkey="handleShortcuts" v-shortkey="shortcuts">
-      <button id="detectjp" @click="detectJapanese">Detect all Japanese</button>
-      <button id="makebubbles" @click="makeBubbles">Translate to English</button>
-      <button id="selectbox" @click="snippetTool" :class="{selected: currentTool == 'SNIPPET'}">
-        Identify one bubble
-      </button>
-      <button id="painttool" @click="paintTool" :class="{selected: currentTool == 'PAINT'}">Brush</button>
-      <button id="saveproject" @click="saveProject">Save</button>
-      <button id="exportimage" @click="exportImage">Export .png</button>
+    <div class="container">
+      <div>
+        <login-component v-model="user"></login-component>
+        <project-component v-show="project.pages.length > 1" ref="project" @change-page="handlePageChange"
+          v-model="project" :current-page-id="currentPageId"></project-component>
+      </div>
 
-    </div>
-    <div id="leftbar">
-      <login-component v-model="user"></login-component>
-      <project-component v-show="project.pages.length > 1" ref="project" @change-page="handlePageChange"
-        v-model="project" :current-page-id="currentPageId"></project-component>
-    </div>
-    <div id="scrollport" @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp"
-      @dragover.prevent @drop.stop.prevent="handleDrop" :style="cursorStyle">
-      <div id="textlayers" style="z-index:102;" v-show="showTextLayer && currentTool == 'TEXT'">
-        <bubble-component v-for="(bubble, i) in bubbles" v-model="bubbles[i]" :key="bubble.id"
-          @bubble-focus="updateSelectedId" @bubble-unfocus="unfocusSelectedId">
-        </bubble-component>
-      </div>
-      <v-stage id="konva" ref="stage" :config="configKonva">
-        <!-- Note: Konva layers are ordered from bottom to top. -->
-        <v-layer ref="editLayer" :config="{visible: showEditLayer}"></v-layer>
-        <v-layer ref="textLayer" :config="{visible: showTextLayer}">
-          <v-text v-for="configText in configTexts" :config="configText" :key="configText.id"></v-text>
-        </v-layer>
-        <v-layer ref="uiLayer">
-          <v-rect :config="snippetRect"></v-rect>
-          <v-circle :config="brushCursor"></v-circle>
-        </v-layer>
-      </v-stage>
-      <div id="dropzone">
-        <canvas ref="canvas" id="canvas" width="520" height="800"></canvas>
-      </div>
-    </div>
-    <div id="rightbar">
-      <img src="assets/logo/vector/logo-256x64.svg" width="180px" height="45px">
-      <div id="bubbleData" class="panel space" v-show="currentTool == 'TEXT' && selectedId != -1">
-        <h4>BUBBLE</h4>
-        <textarea v-model="selectedBubble.japanese" rows="5"></textarea>
-        <textarea v-model="selectedBubble.english" rows="5"></textarea>
-        <div>
-          Line height:
-          <input type="number" v-model="selectedBubble.lineHeight" step="0.05">
+      <div class="row">
+        <div class="col-md-7">
+          <div id="scrollport" @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp"
+            @dragover.prevent @drop.stop.prevent="handleDrop" :style="cursorStyle">
+            <div id="textlayers" style="z-index:102;" v-show="showTextLayer && currentTool == 'TEXT'">
+              <bubble-component v-for="(bubble, i) in bubbles" v-model="bubbles[i]" :key="bubble.id"
+                @bubble-focus="updateSelectedId" @bubble-unfocus="unfocusSelectedId">
+              </bubble-component>
+            </div>
+            <v-stage id="konva" ref="stage" :config="configKonva">
+              <!-- Note: Konva layers are ordered from bottom to top. -->
+              <v-layer ref="editLayer" :config="{visible: showEditLayer}"></v-layer>
+              <v-layer ref="textLayer" :config="{visible: showTextLayer}">
+                <v-text v-for="configText in configTexts" :config="configText" :key="configText.id"></v-text>
+              </v-layer>
+              <v-layer ref="uiLayer">
+                <v-rect :config="snippetRect"></v-rect>
+                <v-circle :config="brushCursor"></v-circle>
+              </v-layer>
+            </v-stage>
+            <div id="dropzone">
+              <canvas ref="canvas" id="canvas" width="520" height="800"></canvas>
+            </div>
+          </div>
         </div>
-        <div>
-          Font size:
-          <input type="number" v-model="selectedBubble.fontSize">
-        </div>
-        <div>
-          Font:
-          <select v-model="selectedBubble.fontFamily">
-            <optgroup style="font-family:'Wild Words'">
-              <option>Wild Words</option>
-            </optgroup>
-            <optgroup style="font-family:'Death Rattle'; font-size: 24px;">
-              <option>Death Rattle</option>
-            </optgroup>
-            <optgroup style="font-family:'Akbar'">
-              <option>Akbar</option>
-            </optgroup>
-            <optgroup style="font-family:'Obelix Pro'">
-              <option>Obelix Pro</option>
-            </optgroup>
-            <optgroup style="font-family:'Laffayette Comic Pro'">
-              <option>Laffayette Comic Pro</option>
-            </optgroup>
-            <optgroup style="font-family:'From Where You Are'">
-              <option>From Where You Are</option>
-            </optgroup>
-          </select>
-        </div>
-        <button @click="bubbleAdvanced = !bubbleAdvanced">Advanced...</button>
-        <div v-show="bubbleAdvanced" class="panel space">
-          <!-- TODO: stroke color, fill color-->
-          <div>Rotate: <input type="number" v-model="selectedBubble.rotate"></div>
-          <input type="range" v-model='selectedBubble.rotate' min='-180' max='180'>
-          <div>Stroke width: <input type="number" v-model="selectedBubble.strokeWidth"></div>
-          <button @click="duplicateSelected">Duplicate bubble</button>
-          <button @click="rasterizeSelected">Rasterize text</button>
+        <div class="col-md-5">
           <div>
-            <label for="deleteSelected">Delete:</label>
-            <input type="checkbox" id="deleteSelected" v-model="selectedBubble.deleted">
+
+            <div class="shadow-sm rounded my-3 p-3 border-0 bg-white" id="toolbar" @shortkey="handleShortcuts"
+              v-shortkey="shortcuts">
+              <h4>Toolbar</h4>
+              <div class="d-flex flex-wrap">
+                <div class="p-2"><button class="btn btn-basic border" id="detectjp" @click="detectJapanese">
+                    Detect all Japanese</button>
+                </div>
+                <div class="p-2"><button class="btn btn-basic border" id="makebubbles" @click="makeBubbles">
+                    Translate to English</button>
+                </div>
+                <div class="p-2"><button class="btn btn-basic border" id="selectbox" @click="snippetTool"
+                    :class="{selected: currentTool == 'SNIPPET'}">
+                    Identify one bubble
+                  </button>
+                </div>
+                <div class="p-2"><button class="btn btn-basic border" id="painttool" @click="paintTool"
+                    :class="{selected: currentTool == 'PAINT'}">Brush</button>
+                </div>
+                <div class="p-2"><button class="btn btn-basic border" id="saveproject"
+                    @click="saveProject">Save</button>
+                </div>
+                <div class="p-2"><button class="btn btn-basic border" id="exportimage" @click="exportImage">Export
+                    .png</button>
+                </div>
+              </div>
+
+
+            </div>
+
+            <div id="bubbleData" class="panel space" v-show="currentTool == 'TEXT' && selectedId != -1">
+              <h4>BUBBLE</h4>
+              <textarea v-model="selectedBubble.japanese" rows="5"></textarea>
+              <textarea v-model="selectedBubble.english" rows="5"></textarea>
+              <div>
+                Line height:
+                <input type="number" v-model="selectedBubble.lineHeight" step="0.05">
+              </div>
+              <div>
+                Font size:
+                <input type="number" v-model="selectedBubble.fontSize">
+              </div>
+              <div>
+                Font:
+                <select v-model="selectedBubble.fontFamily">
+                  <optgroup style="font-family:'Wild Words'">
+                    <option>Wild Words</option>
+                  </optgroup>
+                  <optgroup style="font-family:'Death Rattle'; font-size: 24px;">
+                    <option>Death Rattle</option>
+                  </optgroup>
+                  <optgroup style="font-family:'Akbar'">
+                    <option>Akbar</option>
+                  </optgroup>
+                  <optgroup style="font-family:'Obelix Pro'">
+                    <option>Obelix Pro</option>
+                  </optgroup>
+                  <optgroup style="font-family:'Laffayette Comic Pro'">
+                    <option>Laffayette Comic Pro</option>
+                  </optgroup>
+                  <optgroup style="font-family:'From Where You Are'">
+                    <option>From Where You Are</option>
+                  </optgroup>
+                </select>
+              </div>
+              <button @click="bubbleAdvanced = !bubbleAdvanced">Advanced...</button>
+              <div v-show="bubbleAdvanced" class="panel space">
+                <!-- TODO: stroke color, fill color-->
+                <div>Rotate: <input type="number" v-model="selectedBubble.rotate"></div>
+                <input type="range" v-model='selectedBubble.rotate' min='-180' max='180'>
+                <div>Stroke width: <input type="number" v-model="selectedBubble.strokeWidth"></div>
+                <button @click="duplicateSelected">Duplicate bubble</button>
+                <button @click="rasterizeSelected">Rasterize text</button>
+                <div>
+                  <label for="deleteSelected">Delete:</label>
+                  <input type="checkbox" id="deleteSelected" v-model="selectedBubble.deleted">
+                </div>
+              </div>
+            </div>
+            <div class="panel" v-show="currentTool == 'SNIPPET'">
+              <h4>INSTRUCTIONS</h4>
+              Click in one corner of the bubble, then on the opposite (diagonal) corner.
+            </div>
+            <div id="brushData" class="shadow-sm rounded my-3 p-3 border-0 bg-white" v-show="currentTool == 'PAINT'">
+              <h4>Brush</h4>
+              Color:
+              <select class="form-select form-control" v-model="brush.color">
+                <option>White</option>
+                <option>Black</option>
+                <option>Erase</option>
+              </select>
+              Size:
+              <input class="form-control" type="number" v-model="brush.size">
+            </div>
+            <div class="shadow-sm rounded my-3 p-3 border-0 bg-white" v-show="currentTool == 'TEXT'">
+              <h4>FONT GUIDE</h4>
+              <span style="font-family:'Wild Words'">Dialogue...</span>
+              <span style="font-family:'Death Rattle'; font-size:30px">Shouts!</span>
+              <span style="font-family:'Akbar'">Handwriting =)</span>
+              <span style="font-family:'Obelix Pro'">Emphasis</span>
+              <span style="font-family:'Laffayette Comic Pro'">Thoughts?</span>
+              <span style="font-family:'From Where You Are'">Anything~</span>
+            </div>
+            <div class="shadow-sm rounded my-3 p-3 border-0 bg-white">
+              <h4>LAYERS</h4>
+              <div>
+                <input type="checkbox" id="checkboxTextLayer" v-model="showTextLayer">
+                <label for="checkboxTextLayer">[1] Show text layer</label>
+              </div>
+              <div>
+                <input type="checkbox" id="checkboxEditLayer" v-model="showEditLayer">
+                <label for="checkboxEditLayer">[2] Show edit layer</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="panel" v-show="currentTool == 'SNIPPET'">
-        <h4>INSTRUCTIONS</h4>
-        Click in one corner of the bubble, then on the opposite (diagonal) corner.
-      </div>
-      <div id="brushData" class="panel" v-show="currentTool == 'PAINT'">
-        <h4>BRUSH</h4>
-        Color:
-        <select v-model="brush.color">
-          <option>White</option>
-          <option>Black</option>
-          <option>Erase</option>
-        </select>
-        Size:
-        <input type="number" v-model="brush.size">
-      </div>
-      <div class="panel" v-show="currentTool == 'TEXT'">
-        <h4>FONT GUIDE</h4>
-        <span style="font-family:'Wild Words'">Dialogue...</span>
-        <span style="font-family:'Death Rattle'; font-size:30px">Shouts!</span>
-        <span style="font-family:'Akbar'">Handwriting =)</span>
-        <span style="font-family:'Obelix Pro'">Emphasis</span>
-        <span style="font-family:'Laffayette Comic Pro'">Thoughts?</span>
-        <span style="font-family:'From Where You Are'">Anything~</span>
-      </div>
-      <div class="panel">
-        <h4>LAYERS</h4>
-        <div>
-          <input type="checkbox" id="checkboxTextLayer" v-model="showTextLayer">
-          <label for="checkboxTextLayer">[1] Show text layer</label>
-        </div>
-        <div>
-          <input type="checkbox" id="checkboxEditLayer" v-model="showEditLayer">
-          <label for="checkboxEditLayer">[2] Show edit layer</label>
-        </div>
-      </div>
+
+
     </div>
+
   </div>
-  </div>
 
 
-  
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-draggable-resizable@2.0.1/dist/VueDraggableResizable.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/intro.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-shortkey@3.1.7/dist/index.min.js"></script>
-<script src="https://unpkg.com/shortid-dist@1.0.5/dist/shortid-2.2.13.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script src='https://unpkg.com/konva@4.0.0/konva.min.js'></script>
-<script src='https://unpkg.com/vue-konva@2.1.7/umd/vue-konva.min.js'></script>
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-storage.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
-<script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/vue-draggable-resizable@2.0.1/dist/VueDraggableResizable.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/intro.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-shortkey@3.1.7/dist/index.min.js"></script>
+  <script src="https://unpkg.com/shortid-dist@1.0.5/dist/shortid-2.2.13.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src='https://unpkg.com/konva@4.0.0/konva.min.js'></script>
+  <script src='https://unpkg.com/vue-konva@2.1.7/umd/vue-konva.min.js'></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+  <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
 
-<!-- My code -->
-<script type="module" src="intro.js"></script>
-<script type="module" src="bubble-vue.js"></script>
-<script type="module" src="project-vue.js"></script>
-<script type="module" src="login-vue.js"></script>
-<script type="module" src="image-background.js"></script>
-<script type="module" src="firebase-network.js  "></script>
-<script type="module" src="translate-network.js  "></script>
-<script type="module" src="main-vue.js"></script>
+  <!-- My code -->
+  <script type="module" src="intro.js"></script>
+  <script type="module" src="bubble-vue.js"></script>
+  <script type="module" src="project-vue.js"></script>
+  <script type="module" src="login-vue.js"></script>
+  <script type="module" src="image-background.js"></script>
+  <script type="module" src="firebase-network.js  "></script>
+  <script type="module" src="translate-network.js  "></script>
+  <script type="module" src="main-vue.js"></script>
 
 </body>
+
 </html>
