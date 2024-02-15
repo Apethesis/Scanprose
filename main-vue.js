@@ -1,7 +1,7 @@
 import { runIntro } from './intro.js';
 import { Bubble, configText, cloneBubble } from './bubble-vue.js';
 import { cloudLoad, cloudSave, loadProject, saveProject, projectUrl, promptLogIn } from './firebase-network.js';
-import { loadRaw, colorWords, toRect, replaceImage, exportPng } from './image-background.js';
+import { loadRaw, colorWords, toRect, replaceImage, exportPng, exportJpg } from './image-background.js';
 import { translate, requestOcr } from './translate-network.js';
 
 // Disable shortcuts in different HTML forms.
@@ -258,13 +258,22 @@ const vueApp = new Vue({
         this.mode = 'PAINT_TOOL';
       }
     },
-    async exportImage() {
+    async exportImageAsPNG() {
+
       firebase.analytics().logEvent('save_image_clicked');
 
       if (!this.user.id && !await promptLogIn()) {
         return;
       }
       await exportPng(this);
+    },
+    async exportImageAsJPG(){
+      firebase.analytics().logEvent('save_image_clicked');
+
+      if (!this.user.id && !await promptLogIn()) {
+        return;
+      }
+      await exportJpg(this);
     },
     async saveProject() {
       firebase.analytics().logEvent('share_page_clicked');

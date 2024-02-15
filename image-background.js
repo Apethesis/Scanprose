@@ -23,6 +23,32 @@ export async function exportPng(mainVue) {
   });
 }
 
+export async function exportJpg(mainVue) {
+  // Copy the main canvas into an offscreen one to save.
+  const offscreenCanvas = document.createElement('canvas');
+  offscreenCanvas.width = mainVue.$refs.canvas.width;
+  offscreenCanvas.height = mainVue.$refs.canvas.height;
+  offscreenCanvas.getContext('2d').drawImage(mainVue.$refs.canvas, 0, 0);
+
+  // Then draw on each layer.
+  const editLayerImage = await toImagePromise(mainVue.$refs.editLayer);
+  offscreenCanvas.getContext('2d').drawImage(editLayerImage, 0, 0);
+  const textLayerImage = await toImagePromise(mainVue.$refs.textLayer);
+  offscreenCanvas.getContext('2d').drawImage(textLayerImage, 0, 0);
+
+  // Convert the offscreen canvas to a JPG image
+  const finalUrl = offscreenCanvas.toDataURL('image/jpeg');
+
+  // Download the JPG image by creating a hidden link.
+  const link = document.createElement('a');
+  link.download = mainVue.$refs.project.currentPageFilename.replace('.png', '.jpg');
+  link.href = finalUrl;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
 /** Converts a Konva layer into a Promise that returns the layer's image. */
 export function toImagePromise(layer) {
   return new Promise((resolve, reject) => {

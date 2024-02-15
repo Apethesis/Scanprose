@@ -80,11 +80,31 @@
                 <div class="p-2"><button class="btn btn-basic border" id="saveproject"
                     @click="saveProject">Save</button>
                 </div>
-                <div class="p-2"><button class="btn btn-basic border" id="exportimage" @click="exportImage">Export
-                    .png</button>
+                <div class="p-2"><button class="btn btn-basic border" onclick="openExportModal()">
+                  Export
+                </button>
                 </div>
               </div>
 
+              <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exportModalLabel">Export Image</h5>
+                      <h5 type="button" class="close" onclick="closeExportModal()">
+                        <span aria-hidden="true">&times;</span>
+                      </h5>
+                    </div>
+                    <div class="modal-body">
+                      <div class="text-center py-4">
+                        <button class="btn btn-primary rounded" @click="exportImageAsPNG">Export as .PNG</button>
+                        <button class="btn btn-basic rounded border" @click="exportImageAsJPG">Export as .JPG</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
 
             </div>
 
@@ -181,6 +201,17 @@
 
   </div>
 
+  <script>
+    function openExportModal(){
+      var modal = document.getElementById('exportModal');
+      modal.classList.add('d-block')
+      modal.classList.add('show')
+    }
+    function closeExportModal(){
+      document.getElementById('exportModal').classList.remove('show');
+      document.getElementById('exportModal').classList.remove('d-block')
+    }
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.js"></script>
   <script
