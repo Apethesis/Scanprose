@@ -25,6 +25,8 @@
 <body>
   <div id="editor">
     <div class="container">
+      <a class="links" id="aboutlink" href="about.html">About</a>
+      <a href="#" class="links" @click="showHelp">Help</a>
       <div>
         <login-component v-model="user"></login-component>
         <project-component v-show="project.pages.length > 1" ref="project" @change-page="handlePageChange"
