@@ -119,8 +119,8 @@
 
             <div id="bubbleData" class="panel space" v-show="currentTool == 'TEXT' && selectedId != -1">
               <h4>BUBBLE</h4>
-              <textarea v-model="selectedBubble.japanese" rows="5"></textarea>
-              <textarea v-model="selectedBubble.english" rows="5"></textarea>
+              <textarea class="form-control" v-model="selectedBubble.japanese" rows="5"></textarea>
+              <textarea class="form-control" v-model="selectedBubble.english" rows="5"></textarea>
               <div>
                 Line height:
                 <input type="number" class="form-control" v-model="selectedBubble.lineHeight" step="0.05">
