@@ -116,15 +116,15 @@
               <textarea v-model="selectedBubble.english" rows="5"></textarea>
               <div>
                 Line height:
-                <input type="number" v-model="selectedBubble.lineHeight" step="0.05">
+                <input type="number" class="form-control" v-model="selectedBubble.lineHeight" step="0.05">
               </div>
               <div>
                 Font size:
-                <input type="number" v-model="selectedBubble.fontSize">
+                <input type="number" class="form-control" v-model="selectedBubble.fontSize">
               </div>
               <div>
                 Font:
-                <select v-model="selectedBubble.fontFamily">
+                <select class="form-control form-select" v-model="selectedBubble.fontFamily">
                   <optgroup style="font-family:'Wild Words'">
                     <option>Wild Words</option>
                   </optgroup>
