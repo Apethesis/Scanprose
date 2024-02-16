@@ -24,9 +24,14 @@
 <body>
   <div id="editor">
     <div class="container">
-      <a class="links" id="aboutlink" href="about.html">About</a>
-      <a href="#" class="links" @click="showHelp">Help</a>
       <div>
+        
+      <div class="d-flex m-auto align-items-center">
+        <img src="assets/logo/vector/logo-256x64.svg" width="180px" height="45px">
+        <a class="nav-link px-3" id="aboutlink" href="about.html"><u>About</u></a>
+        <a class="nav-link px-3" href="#" @click="showHelp"><u>Help</u></a>
+      </div>
+        
         <login-component v-model="user"></login-component>
         <project-component v-show="project.pages.length > 1" ref="project" @change-page="handlePageChange"
           v-model="project" :current-page-id="currentPageId"></project-component>

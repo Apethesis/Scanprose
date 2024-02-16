@@ -24,8 +24,7 @@ Vue.component('login-component', {
 
   <div class="row">
     <div class="col-md-6">
-
-      <img src="assets/logo/vector/logo-256x64.svg" width="180px" height="45px">
+      
       <h4 class="mt-3">Welcome, {{ value.name }}!</h4>
       <div v-if="value.id">
 
@@ -38,8 +37,6 @@ Vue.component('login-component', {
       </div>
     </div>
     <div class="col-md-6">
-
-      <p><b>Projects</b></p>
 
       <ul>
         <li v-for="project in value.projects">

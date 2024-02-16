@@ -13,19 +13,6 @@ input, textarea, select, button {
   height: 100vh;
 }
 
-button.selected {
-  background-color: #f8d1d1;
-}
-
-#aboutlink {
-  padding-left: 180px;
-  padding-right: 20px;
-}
-
-.links{
-  font-size: 18px;
-}
-
 #scrollport {
   width: fit-content;
   overflow: scroll;
