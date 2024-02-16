@@ -262,17 +262,11 @@ const vueApp = new Vue({
 
       firebase.analytics().logEvent('save_image_clicked');
 
-      if (!this.user.id && !await promptLogIn()) {
-        return;
-      }
       await exportPng(this);
     },
     async exportImageAsJPG(){
       firebase.analytics().logEvent('save_image_clicked');
 
-      if (!this.user.id && !await promptLogIn()) {
-        return;
-      }
       await exportJpg(this);
     },
     async saveProject() {
@@ -393,4 +387,17 @@ function extractText(block) {
     }
   }
   return result;
+}
+
+var uploadInput = document.getElementById('uploadInput');
+
+uploadInput.addEventListener('change', function() {
+  handleFileUpload(this.files);
+});
+
+function handleFileUpload(files) {
+  if (files.length > 0) {
+    var file = files[0];
+    replaceImage(file, vueApp);
+  }
 }

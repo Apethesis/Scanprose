@@ -65,6 +65,13 @@
               v-shortkey="shortcuts">
               <h4>Toolbar</h4>
               <div class="d-flex flex-wrap">
+                <div class="p-2">
+                  <input type="file" id="uploadInput" style="display: none;" />
+                  <button class="btn btn-basic border" onclick="document.getElementById('uploadInput').click();">
+                    Upload
+                  </button>
+                </div>
+                
                 <div class="p-2"><button class="btn btn-basic border" id="detectjp" @click="detectJapanese">
                     Detect all Japanese</button>
                 </div>
