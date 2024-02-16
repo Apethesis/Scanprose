@@ -29,19 +29,23 @@ export async function requestOcr(canvas) {
 }
 
 const TRANSLATE_URL = 'https://translation.googleapis.com/language/translate/v2?key=AIzaSyD6-pwL4QNBw5ggr-1ZY9m-zVS0ceSut90';
-function buildTranslateRequest(text) {
-  return `{
-  "q": "${text}",
-  "target": "en",
-  "format": "text",
-}`;
-}
-
 export async function translate(text) {
+  var languageSelection = document.getElementById('languageSelect');
+
+  var selectedLanguage = languageSelection.value;
+
   const response = await fetch(TRANSLATE_URL, {
     method: 'POST',
-    body: buildTranslateRequest(text),
+    body: buildTranslateRequest(text, selectedLanguage),
     headers: { 'Content-Type': 'application/json' }
   });
   return response.json();
+}
+
+function buildTranslateRequest(text, selectedLanguage) {
+  return JSON.stringify({
+    "q": text,
+    "target": selectedLanguage,
+    "format": "text",
+  });
 }

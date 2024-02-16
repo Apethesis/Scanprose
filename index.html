@@ -70,12 +70,8 @@
                     Upload
                   </button>
                 </div>
-                
-                <div class="p-2"><button class="btn btn-basic border" id="detectjp" @click="detectJapanese">
-                    Detect all Japanese</button>
-                </div>
-                <div class="p-2"><button class="btn btn-basic border" id="makebubbles" @click="makeBubbles">
-                    Translate to English</button>
+                <div class="p-2"><button class="btn btn-basic border" id="detectjp" @click="autoDetectAndTranslate">
+                  AI Auto Translate</button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" id="selectbox" @click="snippetTool"
                     :class="{selected: currentTool == 'SNIPPET'}">
@@ -198,6 +194,18 @@
               <div>
                 <input type="checkbox" id="checkboxEditLayer" v-model="showEditLayer">
                 <label for="checkboxEditLayer">[2] Show edit layer</label>
+              </div>
+            </div>
+            <div class="shadow-sm rounded my-3 p-3 border-0 bg-white">
+              <h4>Select Language</h4>
+
+              <div class="dropdown">
+                <select class="form-select form-control" id="languageSelect" aria-label="Select Language">
+                  <option value="en" selected>English</option>
+                  <option value="zh">Chinese</option>
+                  <option value="ja">Japanese</option>
+                  <option value="ko">Korean</option>
+                </select>
               </div>
             </div>
           </div>

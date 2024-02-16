@@ -232,14 +232,19 @@ const vueApp = new Vue({
     duplicateSelected() {
       this.bubbles.push(cloneBubble(this.selectedBubble));
     },
-    makeBubbles() {
-      firebase.analytics().logEvent('translate_en_clicked');
-      makeAllBubbles(this.blocks);
-    },
-    detectJapanese() {
+
+    autoDetectAndTranslate() {
       firebase.analytics().logEvent('detect_jp_clicked');
-      analyze(this);
+      analyze(this)
+        .then(() => {
+          firebase.analytics().logEvent('auto_translate_clicked');
+          makeAllBubbles(this.blocks);
+        })
+        .catch(error => {
+          console.error('Error occurred:', error);
+        });
     },
+    
     snippetTool() {
       if (this.currentTool == 'SNIPPET') {
         this.mode = '';
@@ -311,8 +316,18 @@ const vueApp = new Vue({
 window.vueApp = vueApp;
 
 function analyze(mainVue) {
-  requestOcr(mainVue.$refs.canvas).then(json => colorWords(json, mainVue));
+  return new Promise((resolve, reject) => {
+    requestOcr(mainVue.$refs.canvas)
+      .then(json => {
+        colorWords(json, mainVue);
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
 }
+
 
 // Normalize a rect to have positive width and height.
 function absoluteRect(rect) {
