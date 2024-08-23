@@ -25,13 +25,13 @@
   <div id="editor">
     <div class="container" style="max-width: 1800px !important;">
       <div>
-        
-      <div class="d-flex m-auto align-items-center">
-        <img src="assets/logo/vector/logo-256x64.svg" width="180px" height="45px">
-        <a class="nav-link px-3" id="aboutlink" href="about.html"><u>About</u></a>
-        <a class="nav-link px-3" href="#" @click="showHelp"><u>Help</u></a>
-      </div>
-        
+
+        <div class="d-flex m-auto align-items-center">
+          <img src="assets/logo/vector/logo-256x64.svg" width="180px" height="45px">
+          <a class="nav-link px-3" id="aboutlink" href="about.html"><u>About</u></a>
+          <a class="nav-link px-3" href="#" @click="showHelp"><u>Help</u></a>
+        </div>
+
         <login-component v-model="user"></login-component>
         <project-component v-show="project.pages.length > 1" ref="project" @change-page="handlePageChange"
           v-model="project" :current-page-id="currentPageId"></project-component>
@@ -62,10 +62,10 @@
             </div>
           </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5 ps-4">
           <div>
 
-            <div class="shadow-sm rounded my-3 p-3 border-0 bg-white" id="toolbar" @shortkey="handleShortcuts"
+            <div class="shadow-sm rounded mb-3 p-3 border-0 bg-white" id="toolbar" @shortkey="handleShortcuts"
               v-shortkey="shortcuts">
               <h4>Toolbar</h4>
               <div class="d-flex flex-wrap">
@@ -76,7 +76,7 @@
                   </button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" id="detectjp" @click="autoDetectAndTranslate">
-                  AI Auto Translate</button>
+                    AI Auto Translate</button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" id="selectbox" @click="snippetTool"
                     :class="{selected: currentTool == 'SNIPPET'}">
@@ -90,12 +90,13 @@
                     @click="saveProject">Save</button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" onclick="openExportModal()">
-                  Export
-                </button>
+                    Export
+                  </button>
                 </div>
               </div>
 
-              <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+              <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content shadow-lg border-0">
                     <div class="modal-header">
@@ -113,7 +114,6 @@
                   </div>
                 </div>
               </div>
-            
 
             </div>
 
@@ -150,17 +150,29 @@
                   <optgroup style="font-family:'From Where You Are'">
                     <option>From Where You Are</option>
                   </optgroup>
+                  <optgroup v-if="customFonts.length > 0" v-for="font in customFonts" :style="{fontFamily: font}">
+                    <option>{{ font }}</option>
+                  </optgroup>
                 </select>
               </div>
-              <button @click="bubbleAdvanced = !bubbleAdvanced">Advanced...</button>
+
+              <button class="btn btn-secondary mt-3" @click="bubbleAdvanced = !bubbleAdvanced">Advanced...</button>
               <div v-show="bubbleAdvanced" class="panel space">
+
+                <hr>
+
+                <div class="my-3">
+                  <label>Select custom font family</label>
+                  <input type="file" class="form-control" @change="uploadFont" accept=".ttf,.otf,.woff,.woff2">
+                </div>
+
                 <!-- TODO: stroke color, fill color-->
                 <div>Rotate: <input type="number" v-model="selectedBubble.rotate"></div>
                 <input type="range" v-model='selectedBubble.rotate' min='-180' max='180'>
-                <div>Stroke width: <input type="number" v-model="selectedBubble.strokeWidth"></div>
-                <button @click="duplicateSelected">Duplicate bubble</button>
-                <button @click="rasterizeSelected">Rasterize text</button>
-                <div>
+                <div class="mb-3">Stroke width: <input type="number" v-model="selectedBubble.strokeWidth"></div>
+                <button class="btn btn-secondary" @click="duplicateSelected">Duplicate bubble</button>
+                <button class="btn btn-secondary" @click="rasterizeSelected">Rasterize text</button>
+                <div class="mt-3">
                   <label for="deleteSelected">Delete:</label>
                   <input type="checkbox" id="deleteSelected" v-model="selectedBubble.deleted">
                 </div>
@@ -223,12 +235,12 @@
   </div>
 
   <script>
-    function openExportModal(){
+    function openExportModal() {
       var modal = document.getElementById('exportModal');
       modal.classList.add('d-block')
       modal.classList.add('show')
     }
-    function closeExportModal(){
+    function closeExportModal() {
       document.getElementById('exportModal').classList.remove('show');
       document.getElementById('exportModal').classList.remove('d-block')
     }
