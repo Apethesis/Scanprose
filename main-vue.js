@@ -11,6 +11,7 @@ const initialPageId = shortid();
 const vueApp = new Vue({
   el: '#editor',
   data: {
+    customFonts: [],
     bubbles: [],
     blocks: '',
     configKonva: {
@@ -100,6 +101,24 @@ const vueApp = new Vue({
     },
   },
   methods: {
+    uploadFont(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const fontName = file.name.split('.')[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          const font = new FontFace(fontName, e.target.result);
+          font.load().then((loadedFont) => {
+            document.fonts.add(loadedFont);
+            this.customFonts.push(fontName);
+            this.selectedBubble.fontFamily = fontName;
+          }).catch(error => console.error("Failed to load font:", error));
+        };
+
+        reader.readAsArrayBuffer(file);
+      }
+    },
     handleMouseDown(event) {
       if (this.mode == 'SNIPPET_START') {
         this.mousedownX = event.offsetX;

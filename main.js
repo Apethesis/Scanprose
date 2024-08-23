@@ -1,4 +1,11 @@
 const { app, BrowserWindow } = require('electron');
+const electronReload = require('electron-reload');
+const path = require('path')
+
+electronReload(__dirname, {
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+});
+
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -10,7 +17,8 @@ function createWindow() {
     });
 
     win.maximize();
-    win.loadURL('http://localhost:8000');
+    // win.loadURL('http://localhost:8000');
+    win.loadFile('index.html')
 }
 
 app.whenReady().then(createWindow);
