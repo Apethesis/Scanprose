@@ -73,12 +73,20 @@ function onloadPromise(src) {
 
 export async function loadRaw(src, mainVue) {
   const img = await onloadPromise(src);
-  mainVue.$refs.canvas.width = img.width;
-  mainVue.$refs.canvas.height = img.height;
-  mainVue.configKonva.width = img.width;
-  mainVue.configKonva.height = img.height;
   const ctx = mainVue.$refs.canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
+  const scrollport = document.getElementById("scrollport"); const dropzone = document.getElementById("dropzone")
+  const md7 = document.getElementsByClassName("col-md-7")[0]
+  const modx = img.width*(md7.offsetWidth/img.width)
+  const mody = img.height*(md7.offsetWidth/img.width)
+  console.log(modx,mody)
+  console.log(md7.offsetHeight)
+  mainVue.configKonva.width = modx;
+  mainVue.configKonva.height = mody;
+  mainVue.$refs.canvas.width = modx;
+  mainVue.$refs.canvas.height = mody;
+  scrollport.style.width = modx+"px"
+  dropzone.style.width = modx+"px"
+  ctx.drawImage(img, 0, 0, modx, mody);
 
   // TODO needs more work when a new image is dropped.
   mainVue.$refs.textLayer.getNode().getLayer().removeChildren();
