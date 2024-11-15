@@ -75,7 +75,7 @@
                     Upload
                   </button>
                 </div>
-                <div class="p-2"><button class="btn btn-basic border" id="detectjp" @click="autoDetectAndTranslate">
+                <div class="p-2"><button class="btn btn-basic border" id="detectjp" onclick="openConfirmModal()">
                     AI Auto Translate</button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" id="selectbox" @click="snippetTool"
@@ -95,6 +95,26 @@
                 <div class="p-2"><button class="btn btn-basic border" onclick="openExportModal()">
                     Export
                   </button>
+                </div>
+              </div>
+
+              <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+                      <h5 type="button" class="close" onclick="closeConfirmModal()">
+                        <span aria-hidden="true">&times;</span>
+                      </h5>
+                    </div>
+                    <div class="modal-body">
+                      <div class="text-center py-4">
+                        <button class="btn btn-primary rounded" @click="autoDetectAndTranslate" onclick="closeConfirmModal()">Yes</button>
+                        <button class="btn btn-basic rounded border" onclick="closeConfirmModal()">No</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -254,6 +274,15 @@
     function closeExportModal() {
       document.getElementById('exportModal').classList.remove('show');
       document.getElementById('exportModal').classList.remove('d-block')
+    }
+    function openConfirmModal() {
+      var modal = document.getElementById('confirmModal');
+      modal.classList.add('d-block')
+      modal.classList.add('show')
+    }
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.remove('show');
+      document.getElementById('confirmModal').classList.remove('d-block')
     }
   </script>
 
