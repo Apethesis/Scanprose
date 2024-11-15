@@ -1,5 +1,5 @@
 export class Bubble {
-  constructor(id, rect, japanese, english) {
+  constructor(id, rect, japanese, english, color) {
     this.id = id;
     this.rect = rect;
     this.japanese = japanese;
@@ -9,7 +9,7 @@ export class Bubble {
     this.lineHeight = 1.2;
     this.deleted = false;
     this.rotate = 0;
-    this.fill = 'black'
+    this.fill = color || 'black'
     this.stroke = 'white';
     this.strokeWidth = 0;
   }

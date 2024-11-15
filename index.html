@@ -62,7 +62,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-5 ps-4">
+        <div class="col-md-5 ps-4" style="position: fixed; right: 0; top: 0; overflow-y: auto; height: 400;">
           <div>
 
             <div class="shadow-sm rounded mb-3 p-3 border-0 bg-white" id="toolbar" @shortkey="handleShortcuts"
@@ -119,7 +119,15 @@
               </div>
 
             </div>
-
+            <div id="selectOptions" class="panel space" v-show="currentTool == 'SNIPPET'">
+              <div>
+                Transparent Background:
+                <select class="form-select form-control" v-model="clearBackground">
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                </select> 
+              </div>
+            </div>
             <div id="bubbleData" class="panel space" v-show="currentTool == 'TEXT' && selectedId != -1">
               <h4>BUBBLE</h4>
               <textarea class="form-control" v-model="selectedBubble.japanese" rows="5"></textarea>

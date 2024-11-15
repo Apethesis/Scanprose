@@ -29,9 +29,10 @@ const vueApp = new Vue({
     bubbleAdvanced: false,
     showTextLayer: true,
     showEditLayer: true,
+    clearBackground: false,
     brush: {
       size: 20,
-      color: "rgba(255,255,255,1)"
+      color: "rgba(0,0,0,1)"
     },
     cursor: {
       x: 0,
@@ -133,7 +134,7 @@ const vueApp = new Vue({
       else if (this.mode == 'SNIPPET_SECOND_CLICK') {
         this.mode = '';
         // A little magical, but snippetRect already has all the right attributes.
-        snippetToBubble(this.$refs.canvas, absoluteRect(this.snippetRect));
+        snippetToBubble(this.$refs.canvas, absoluteRect(this.snippetRect), this.brush.color, Boolean(this.clearBackground));
         // Then hide the konva rectangle
         this.snippetRect.width = 0;
         this.snippetRect.height = 0;
@@ -189,7 +190,7 @@ const vueApp = new Vue({
       switch (event.srcKey) {
         case 'brush':
           this.mode = 'PAINT_TOOL';
-          this.brush.color = "rgba(255,255,255,1)";
+          this.brush.color = "rgba(0,0,0,1)";
           break;
         case 'erase':
           this.mode = 'PAINT_TOOL';
@@ -379,7 +380,7 @@ function absoluteRect(rect) {
 const snippet = document.createElement('canvas');
 const snippetCtx = snippet.getContext('2d');
 
-function snippetToBubble(bgCanvas, rect) {
+function snippetToBubble(bgCanvas, rect, textColor, skipClear) {
   // Resize the snippet canvas, then copy to it
   snippet.width = rect.width;
   snippet.height = rect.height;
@@ -393,22 +394,24 @@ function snippetToBubble(bgCanvas, rect) {
       if (json.responses.length > 0) {
         let text = json.responses[0].textAnnotations[0].description;
         text = text.replace(/\s/g, ''); // Strip out all whitespace
-        makeBubble(text, rect);
+        makeBubble(text, rect, textColor, skipClear);
       }
     });
 }
 
-async function makeBubble(text, rect) {
+async function makeBubble(text, rect, textColor, skipClear) {
   const json = await translate(text);
   const english = json.data.translations[0].translatedText;
   console.log(`Original: ${text}, Translated: ${english}`);
-  const bubble = new Bubble(shortid(), enlargeRect(rect), text, english);
+  const bubble = new Bubble(shortid(), enlargeRect(rect), text, english, textColor);
   vueApp.bubbles.push(bubble);
 
   // Draw a white box, to hide the Japanese text.
-  const whiteRect = new Konva.Rect({ ...rect, fill: this.brush.color });
-  vueApp.$refs.editLayer.getNode().getLayer().add(whiteRect);
-  vueApp.$refs.editLayer.getNode().getLayer().batchDraw();
+  if (!skipClear) { 
+    const whiteRect = new Konva.Rect({ ...rect, fill: "White" });
+    vueApp.$refs.editLayer.getNode().getLayer().add(whiteRect);
+    vueApp.$refs.editLayer.getNode().getLayer().batchDraw();
+  }
 }
 
 export function makeAllBubbles(blocks) {
