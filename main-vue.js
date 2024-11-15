@@ -32,7 +32,7 @@ const vueApp = new Vue({
     clearBackground: false,
     brush: {
       size: 20,
-      color: "rgba(0,0,0,1)"
+      color: "rgba(255,255,255,1)"
     },
     cursor: {
       x: 0,
@@ -190,7 +190,7 @@ const vueApp = new Vue({
       switch (event.srcKey) {
         case 'brush':
           this.mode = 'PAINT_TOOL';
-          this.brush.color = "rgba(0,0,0,1)";
+          this.brush.color = "rgba(255,255,255,1)";
           break;
         case 'erase':
           this.mode = 'PAINT_TOOL';
@@ -407,7 +407,7 @@ async function makeBubble(text, rect, textColor, skipClear) {
   vueApp.bubbles.push(bubble);
 
   // Draw a white box, to hide the Japanese text.
-  if (!skipClear) { 
+  if (true) { 
     const whiteRect = new Konva.Rect({ ...rect, fill: "White" });
     vueApp.$refs.editLayer.getNode().getLayer().add(whiteRect);
     vueApp.$refs.editLayer.getNode().getLayer().batchDraw();
