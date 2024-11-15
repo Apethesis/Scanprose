@@ -84,7 +84,10 @@
                   </button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" id="painttool" @click="paintTool"
-                    :class="{selected: currentTool == 'PAINT'}">Brush [b]</button>
+                    :class="{selected: currentTool == 'PAINT'}">Brush [b]</button>  
+                </div>
+                <div class="p-2"><button class="btn btn-basic border" id="picker" @click="colorPicker"
+                  :class="{selected: currentTool == 'PICKER'}">Color Picker [i]</button>
                 </div>
                 <div class="p-2"><button class="btn btn-basic border" id="saveproject"
                     @click="saveProject">Save</button>
@@ -186,9 +189,9 @@
               <h4>Brush</h4>
               Color:
               <select class="form-select form-control" v-model="brush.color">
-                <option>White</option>
-                <option>Black</option>
-                <option>Erase</option>
+                <option value="rgba(255,255,255,1)">White</option>
+                <option value="rgba(0,0,0,1)">Black</option>
+                <option value="rgba(0,0,0,0)">Erase</option>
               </select>
               Size:
               <input class="form-control" type="number" v-model="brush.size">

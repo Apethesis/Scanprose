@@ -31,7 +31,7 @@ const vueApp = new Vue({
     showEditLayer: true,
     brush: {
       size: 20,
-      color: 'White'
+      color: "rgba(255,255,255,1)"
     },
     cursor: {
       x: 0,
@@ -42,6 +42,7 @@ const vueApp = new Vue({
       brush: ['b'],
       erase: ['e'],
       snippet: ['s'],
+      picker: ['i'],
       escape: ['esc'],
       toggleText: ['1'],
       toggleEdit: ['2'],
@@ -120,6 +121,7 @@ const vueApp = new Vue({
       }
     },
     handleMouseDown(event) {
+      console.log(this.mode);
       if (this.mode == 'SNIPPET_START') {
         this.mousedownX = event.offsetX;
         this.mousedownY = event.offsetY;
@@ -144,11 +146,16 @@ const vueApp = new Vue({
           stroke: this.brush.color,
           strokeWidth: this.brush.size,
           globalCompositeOperation:
-            this.brush.color == 'Erase' ? 'destination-out' : 'source-over',
+            this.brush.color == "rgba(0,0,0,0)" ? 'destination-out' : 'source-over',
           points: [event.offsetX, event.offsetY, event.offsetX, event.offsetY]
         });
         this.$refs.editLayer.getNode().getLayer().add(this.lastLine);
         this.$refs.editLayer.getNode().getLayer().batchDraw();
+      }
+      else if (this.mode == 'COLOR_PICKER') {
+        let col = this.$refs.canvas.getContext('2d').getImageData(event.offsetX,event.offsetY,1,1)
+        this.mode = 'PAINT_TOOL';
+        this.brush.color = 'rgba('+col.data[0]+','+col.data[1]+','+col.data[2]+',1)' // this is awful but i cannot use THE key
       }
     },
     handleMouseMove(event) {
@@ -182,14 +189,17 @@ const vueApp = new Vue({
       switch (event.srcKey) {
         case 'brush':
           this.mode = 'PAINT_TOOL';
-          this.brush.color = 'White';
+          this.brush.color = "rgba(255,255,255,1)";
           break;
         case 'erase':
           this.mode = 'PAINT_TOOL';
-          this.brush.color = 'Erase';
+          this.brush.color = "rgba(0,0,0,0)";
           break;
         case 'snippet':
           this.snippetTool();
+          break;
+        case 'picker':
+          this.mode = "COLOR_PICKER"
           break;
         case 'escape':
           this.mode = '';
@@ -280,6 +290,14 @@ const vueApp = new Vue({
       } else {
         firebase.analytics().logEvent('paint_tool_clicked');
         this.mode = 'PAINT_TOOL';
+      }
+    },
+    colorPicker() {
+      if (this.currentTool == "COLOR_PICKER") {
+        this.mode = ''
+      } else {
+        firebase.analytics().logEvent('color_picker_clicked');
+        this.mode = 'COLOR_PICKER';
       }
     },
     async exportImageAsPNG() {
