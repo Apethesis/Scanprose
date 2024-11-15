@@ -147,7 +147,7 @@ const vueApp = new Vue({
           stroke: this.brush.color,
           strokeWidth: this.brush.size,
           globalCompositeOperation:
-            this.brush.color == "rgba(0,0,0,0)" ? 'destination-out' : 'source-over',
+            this.brush.color == 'Erase' ? 'destination-out' : 'source-over',
           points: [event.offsetX, event.offsetY, event.offsetX, event.offsetY]
         });
         this.$refs.editLayer.getNode().getLayer().add(this.lastLine);
