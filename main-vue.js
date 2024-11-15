@@ -406,7 +406,7 @@ async function makeBubble(text, rect) {
   vueApp.bubbles.push(bubble);
 
   // Draw a white box, to hide the Japanese text.
-  const whiteRect = new Konva.Rect({ ...rect, fill: 'white' });
+  const whiteRect = new Konva.Rect({ ...rect, fill: this.brush.color });
   vueApp.$refs.editLayer.getNode().getLayer().add(whiteRect);
   vueApp.$refs.editLayer.getNode().getLayer().batchDraw();
 }
